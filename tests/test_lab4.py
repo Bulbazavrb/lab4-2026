@@ -6,27 +6,37 @@ import unittest
 import sys
 import os
 
-# Додаємо кореневу папку src до шляху пошуку модулів
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Автоматичне додавання шляхів для пошуку lab4.py незалежно від місця запуску
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
+src_dir = os.path.abspath(os.path.join(parent_dir, 'src'))
 
-from lab4 import (
-    find_substring,
-    replace_substring,
-    split_text,
-    format_string_f,
-    format_string_method,
-    extract_emails,
-    validate_phone_number,
-    extract_hashtags,
-    extract_mentions,
-    count_words,
-    count_sentences,
-    word_frequency,
-    extract_variant_data,
-    extract_law_enforcement_ai,
-    parse_recipe_details
-)
+for p in [src_dir, parent_dir, current_dir]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+try:
+    from lab4 import (
+        find_substring,
+        replace_substring,
+        split_text,
+        format_string_f,
+        format_string_method,
+        extract_emails,
+        validate_phone_number,
+        extract_hashtags,
+        extract_mentions,
+        count_words,
+        count_sentences,
+        word_frequency,
+        extract_law_enforcement_ai,
+        parse_recipe_details
+    )
+except ImportError as err:
+    print(f"\n[!] Помилка імпорту lab4: {err}")
+    print("Переконайтеся, що файл 'lab4.py' розташований у папці 'src' або у головній папці проекту.")
+    input("\nНатисніть Enter для виходу...")
+    sys.exit(1)
 
 
 class TestTextAnalyzer(unittest.TestCase):
@@ -101,4 +111,16 @@ class TestTextAnalyzer(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(verbosity=2)
+    # Створюємо Runner і перехоплюємо вихід, щоб вікно cmd не закривалося
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestTextAnalyzer)
+    runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(suite)
+
+    print("\n" + "=" * 50)
+    print(f"Всього тестів пройдено: {result.testsRun}")
+    print(f"Успішних: {result.testsRun - len(result.failures) - len(result.errors)}")
+    print(f"Помилок: {len(result.failures) + len(result.errors)}")
+    print("=" * 50)
+
+    # Цей рядок блокує закриття вікна
+    input("\nНатисніть Enter для виходу...")
