@@ -1,9 +1,14 @@
+"""
+Тести для перевірки функцій лабораторної роботи № 4 (Варіант 12)
+"""
+
 import unittest
 import sys
 import os
 
-# Додаємо шлях до папки src, щоб можна було імпортувати lab4
+# Додаємо кореневу папку src до шляху пошуку модулів
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from lab4 import (
     find_substring,
@@ -18,82 +23,82 @@ from lab4 import (
     count_words,
     count_sentences,
     word_frequency,
-    # Додайте сюди інші функції, які хочете протестувати
+    extract_variant_data,
+    extract_law_enforcement_ai,
+    parse_recipe_details
 )
+
 
 class TestTextAnalyzer(unittest.TestCase):
 
     def test_find_substring(self):
-        """Тест для функції find_substring."""
-        # TODO: Напишіть свій тест
-        # self.assertEqual(find_substring("Hello, world!", "world"), 7)
-        pass
+        self.assertEqual(find_substring("Hello, world!", "world"), 7)
+        self.assertEqual(find_substring("Python", "Java"), -1)
 
     def test_replace_substring(self):
-        """Тест для функції replace_substring."""
-        # TODO: Напишіть свій тест
-        # self.assertEqual(replace_substring("Hello, world!", "world", "Python"), "Hello, Python!")
-        pass
+        self.assertEqual(replace_substring("Hello, world!", "world", "Python"), "Hello, Python!")
 
     def test_split_text(self):
-        """Тест для функції split_text."""
-        # TODO: Напишіть свій тест
-        # self.assertEqual(split_text("Hello, world!", ", "), ["Hello", "world!"])
-        pass
+        self.assertEqual(split_text("Hello, world!", ", "), ["Hello", "world!"])
 
     def test_format_string_f(self):
-        """Тест для функції format_string_f."""
-        # TODO: Напишіть свій тест
-        # self.assertEqual(format_string_f("Alice", 30), "Мене звати Alice і мені 30 років.")
-        pass
+        self.assertEqual(format_string_f("Alice", 30), "Мене звати Alice і мені 30 років.")
 
     def test_format_string_method(self):
-        """Тест для функції format_string_method."""
-        # TODO: Напишіть свій тест
-        # self.assertEqual(format_string_method("Bob", 25), "Мене звати Bob і мені 25 років.")
-        pass
+        self.assertEqual(format_string_method("Bob", 25), "Мене звати Bob і мені 25 років.")
 
     def test_extract_emails(self):
-        """Тест для функції extract_emails."""
-        text = "Contact us at info@example.com or support@test.com"
-        expected = ["info@example.com", "support@test.com"]
-        # TODO: Напишіть свій тест
-        # self.assertEqual(extract_emails(text), expected)
-        pass
+        text = "Контакти: info@example.com, support@test.ua та wrong-email@"
+        expected = ["info@example.com", "support@test.ua"]
+        self.assertEqual(extract_emails(text), expected)
 
     def test_validate_phone_number(self):
-        """Тест для функції validate_phone_number."""
-        # TODO: Напишіть свої тести для валідних і невалідних номерів
-        # self.assertTrue(validate_phone_number("+380123456789"))
-        # self.assertFalse(validate_phone_number("12345"))
-        pass
+        self.assertTrue(validate_phone_number("+380123456789"))
+        self.assertTrue(validate_phone_number("380671112233"))
+        self.assertTrue(validate_phone_number("0509998877"))
+        self.assertFalse(validate_phone_number("12345"))
+        self.assertFalse(validate_phone_number("+38012345678999"))
 
     def test_extract_hashtags(self):
-        """Тест для функції extract_hashtags."""
-        text = "I love #Python and #Programming"
-        expected = ["#Python", "#Programming"]
-        # TODO: Напишіть свій тест
-        # self.assertEqual(extract_hashtags(text), expected)
-        pass
+        text = "Тестуємо #Python, #Dota2 та #CyberSport!"
+        expected = ["#Python", "#Dota2", "#CyberSport"]
+        self.assertEqual(extract_hashtags(text), expected)
 
     def test_extract_mentions(self):
-        """Тест для функції extract_mentions."""
-        # TODO: Напишіть свій тест
-        pass
+        text = "Вітаємо @developer та @admin у чаті!"
+        expected = ["@developer", "@admin"]
+        self.assertEqual(extract_mentions(text), expected)
 
     def test_count_words(self):
-        """Тест для функції count_words."""
-        # TODO: Напишіть свій тест
-        pass
+        self.assertEqual(count_words("Це тестове речення для перевірки кількості слів."), 7)
 
     def test_count_sentences(self):
-        """Тест для функції count_sentences."""
-        # TODO: Напишіть свій тест
-        pass
+        self.assertEqual(count_sentences("Перше речення. Друге речення! Третє речення?"), 3)
 
-    # === Додайте власні тести для інших функцій та варіантів ===
+    def test_word_frequency(self):
+        freq = word_frequency("дота гра дота турнір гра дота")
+        self.assertEqual(freq['дота'], 3)
+        self.assertEqual(freq['гра'], 2)
+
+    def test_variant_12_ai_extraction(self):
+        text = "Безпеку забезпечує LawForce-AI, а моніторинг веде Patrol-AI."
+        expected = ["LawForce-AI", "Patrol-AI"]
+        self.assertEqual(extract_law_enforcement_ai(text), expected)
+
+    def test_variant_12_recipe_parser(self):
+        sample_recipe = (
+            "• Борошно - 300 г\n"
+            "• Вода: 150 мл\n"
+            "1. Замісити тісто.\n"
+            "2. Залишити на 30 хвилин."
+        )
+        data = parse_recipe_details(sample_recipe)
+        self.assertEqual(len(data['ingredients']), 2)
+        self.assertEqual(data['ingredients'][0]['name'], "Борошно")
+        self.assertEqual(data['ingredients'][0]['quantity'], "300 г")
+        self.assertEqual(len(data['steps']), 2)
+        self.assertEqual(data['steps'][0], "Замісити тісто.")
 
 
 if __name__ == '__main__':
-    # Запуск тестів
     unittest.main(verbosity=2)
